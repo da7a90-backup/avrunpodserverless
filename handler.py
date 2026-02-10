@@ -161,14 +161,14 @@ def prepare_workflow(
     workflow_str = workflow_str.replace("PROMPT_PLACEHOLDER", escaped_prompt)
 
     if is_couples:
-        # Couples workflow: IMAGE1=user1, IMAGE2=user2, IMAGE3=reference
-        workflow_str = workflow_str.replace("IMAGE1_PLACEHOLDER", user_image1_name)
-        workflow_str = workflow_str.replace("IMAGE2_PLACEHOLDER", user_image2_name)
-        workflow_str = workflow_str.replace("IMAGE3_PLACEHOLDER", reference_image_name)
+        # Couples workflow: IMAGE1=reference, IMAGE2=user1, IMAGE3=user2
+        workflow_str = workflow_str.replace("IMAGE1_PLACEHOLDER", reference_image_name)
+        workflow_str = workflow_str.replace("IMAGE2_PLACEHOLDER", user_image1_name)
+        workflow_str = workflow_str.replace("IMAGE3_PLACEHOLDER", user_image2_name)
     else:
-        # Single workflow: IMAGE1=user, IMAGE2=reference
-        workflow_str = workflow_str.replace("IMAGE1_PLACEHOLDER", user_image1_name)
-        workflow_str = workflow_str.replace("IMAGE2_PLACEHOLDER", reference_image_name)
+        # Single workflow: IMAGE1=reference, IMAGE2=user
+        workflow_str = workflow_str.replace("IMAGE1_PLACEHOLDER", reference_image_name)
+        workflow_str = workflow_str.replace("IMAGE2_PLACEHOLDER", user_image1_name)
 
     return json.loads(workflow_str)
 
