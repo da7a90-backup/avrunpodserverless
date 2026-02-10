@@ -22,18 +22,21 @@ except ImportError:
     import requests
 
 COMFYUI_URL = "http://127.0.0.1:8188"
-COMFYUI_PATH = "/runpod-volume/ComfyUI"
+COMFYUI_PATH = "/comfyui"
 
 print(f"Handler starting...")
 print(f"Python version: {sys.version}")
 print(f"Looking for ComfyUI at: {COMFYUI_PATH}")
 print(f"ComfyUI exists: {os.path.exists(COMFYUI_PATH)}")
 
-# Debug: List contents of /runpod-volume
-if os.path.exists("/runpod-volume"):
-    print(f"Contents of /runpod-volume: {os.listdir('/runpod-volume')}")
-else:
-    print("/runpod-volume does not exist - network volume not mounted")
+# Debug: List installed models
+if os.path.exists("/comfyui/models"):
+    print("Models directory exists")
+    if os.path.exists("/comfyui/models/loras"):
+        loras = os.listdir("/comfyui/models/loras")
+        print(f"LoRAs found: {len(loras)}")
+        for lora in loras:
+            print(f"  - {lora}")
 
 # Global ComfyUI process
 comfyui_process = None
