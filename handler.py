@@ -71,6 +71,7 @@ def start_comfyui():
     env['PYTHONPATH'] = COMFYUI_PATH
 
     # Don't capture stdout/stderr so we can see output in logs
+    print(f"Executing: {sys.executable} {main_py} --listen 127.0.0.1 --port 7860")
     comfyui_process = subprocess.Popen([
         sys.executable,
         main_py,
@@ -78,10 +79,13 @@ def start_comfyui():
         "--port", "7860"
     ], env=env, cwd=COMFYUI_PATH)
 
+    print(f"ComfyUI process started with PID: {comfyui_process.pid}")
+
     # Wait for server to be ready
     for i in range(120):
         # Check if process died
         if comfyui_process.poll() is not None:
+            print(f"ERROR: ComfyUI process died with exit code {comfyui_process.returncode}")
             raise Exception(f"ComfyUI process died with exit code {comfyui_process.returncode}")
 
         try:

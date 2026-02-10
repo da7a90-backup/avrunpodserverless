@@ -1,20 +1,11 @@
-FROM pytorch/pytorch:2.0.1-cuda11.7-cudnn8-runtime
+FROM runpod/base:0.4.0-cuda11.8.0
 
 # Set working directory
 WORKDIR /
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    git \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install ComfyUI dependencies (torch already in base image)
+# Install minimal dependencies
 RUN pip install --no-cache-dir \
-    runpod requests websocket-client \
-    pillow numpy scipy \
-    transformers tokenizers sentencepiece \
-    safetensors aiohttp pyyaml tqdm psutil \
-    torchvision
+    runpod requests websocket-client
 
 # Copy handler
 COPY handler.py /handler.py
