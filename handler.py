@@ -11,7 +11,6 @@ import sys
 import base64
 import time
 import uuid
-import random
 from typing import Dict, Any, List, Optional
 
 # Only import requests if available
@@ -158,13 +157,8 @@ def prepare_workflow(
     # Escape prompt properly for JSON
     escaped_prompt = json.dumps(prompt)[1:-1]
 
-    # Generate random seed for variety
-    random_seed = random.randint(1, 2**31 - 1)
-    print(f"  Using random seed: {random_seed}")
-
     # Replace placeholders
     workflow_str = workflow_str.replace("PROMPT_PLACEHOLDER", escaped_prompt)
-    workflow_str = workflow_str.replace("SEED_PLACEHOLDER", str(random_seed))
 
     if is_couples:
         # Couples workflow: IMAGE1=reference (style), IMAGE2=user_face_1, IMAGE3=user_face_2

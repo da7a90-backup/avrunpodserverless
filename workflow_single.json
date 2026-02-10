@@ -106,7 +106,7 @@
   },
   "447": {
     "inputs": {
-      "seed": SEED_PLACEHOLDER,
+      "seed": 43,
       "steps": 25,
       "cfg": 2.5,
       "sampler_name": "euler",
