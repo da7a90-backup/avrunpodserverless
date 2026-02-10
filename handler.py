@@ -21,7 +21,7 @@ except ImportError:
     os.system("pip install requests websocket-client")
     import requests
 
-COMFYUI_URL = "http://127.0.0.1:7860"
+COMFYUI_URL = "http://127.0.0.1:8188"
 COMFYUI_PATH = "/runpod-volume/ComfyUI"
 
 print(f"Handler starting...")
@@ -273,8 +273,21 @@ def handler(event):
     input_data = event.get("input", {})
 
     try:
-        # Start ComfyUI if not running
-        start_comfyui()
+        # Wait for ComfyUI to be ready (it's started by the base image)
+        print("Waiting for ComfyUI to be ready...")
+        for i in range(60):
+            try:
+                response = requests.get(f"{COMFYUI_URL}/system_stats", timeout=2)
+                if response.status_code == 200:
+                    print(f"ComfyUI is ready after {i} seconds")
+                    break
+            except:
+                if i % 10 == 0:
+                    print(f"Still waiting for ComfyUI... ({i}s)")
+                time.sleep(1)
+        else:
+            raise Exception("ComfyUI not ready after 60 seconds")
+
         job_id = input_data.get("jobId")
         style_id = input_data.get("styleId", "single")
         user_image1_url = input_data.get("userImage1Url")
