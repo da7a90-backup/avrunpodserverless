@@ -137,7 +137,7 @@ def load_workflow_template(style_id: str) -> Dict[str, Any]:
     """Load workflow template based on style"""
     is_couples = style_id == 'couples'
     filename = 'workflow_couples.json' if is_couples else 'workflow_single.json'
-    filepath = f"{COMFYUI_PATH}/{filename}"
+    filepath = f"/{filename}"  # Load from Docker image root
 
     with open(filepath, 'r') as f:
         return json.load(f)

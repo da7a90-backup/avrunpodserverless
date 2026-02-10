@@ -1,0 +1,196 @@
+{
+  "436": {
+    "inputs": {
+      "strength": 1,
+      "model": [
+        "441",
+        0
+      ]
+    },
+    "class_type": "CFGNorm"
+  },
+  "438": {
+    "inputs": {
+      "clip_name": "qwen_2.5_vl_7b_fp8_scaled.safetensors",
+      "type": "qwen_image",
+      "device": "default"
+    },
+    "class_type": "CLIPLoader"
+  },
+  "439": {
+    "inputs": {
+      "unet_name": "qwen_image_edit_2511_bf16.safetensors",
+      "weight_dtype": "default"
+    },
+    "class_type": "UNETLoader"
+  },
+  "440": {
+    "inputs": {
+      "prompt": "ugly, duplicate, morbid, mutilated, out of frame, extra fingers, mutated hands, poorly drawn hands, poorly drawn face, mutation, deformed, ugly, blurry, bad anatomy, bad proportions, extra limbs, cloned face, out of frame, ugly, extra limbs, bad anatomy, gross proportions, malformed limbs, missing arms, missing legs, extra arms, extra legs, mutated hands, fused fingers, too many fingers, long neck, extra head, cloned head, extra body, cloned body. extra hands, clone hands, weird hand, weird finger, weird arm, (mutation:1.3), (deformed:1.3), (blurry), (bad anatomy:1.1), (bad proportions:1.2), out of frame, ugly, (long neck:1.2), (worst quality:1.4), (low quality:1.4), (monochrome:1.1), text, signature, watermark, bad anatomy, disfigured, jpeg artifacts, 3d max, grotesque, desaturated, blur, haze, polysyndactyly",
+      "clip": [
+        "438",
+        0
+      ],
+      "vae": [
+        "465",
+        0
+      ],
+      "image1": [
+        "460",
+        0
+      ],
+      "image2": [
+        "448",
+        0
+      ],
+      "image3": [
+        "466",
+        0
+      ]
+    },
+    "class_type": "TextEncodeQwenImageEditPlus"
+  },
+  "441": {
+    "inputs": {
+      "shift": 1,
+      "model": [
+        "459",
+        0
+      ]
+    },
+    "class_type": "ModelSamplingAuraFlow"
+  },
+  "442": {
+    "inputs": {
+      "prompt": "PROMPT_PLACEHOLDER",
+      "clip": [
+        "438",
+        0
+      ],
+      "vae": [
+        "465",
+        0
+      ],
+      "image1": [
+        "460",
+        0
+      ],
+      "image2": [
+        "448",
+        0
+      ],
+      "image3": [
+        "466",
+        0
+      ]
+    },
+    "class_type": "TextEncodeQwenImageEditPlus"
+  },
+  "443": {
+    "inputs": {
+      "pixels": [
+        "460",
+        0
+      ],
+      "vae": [
+        "465",
+        0
+      ]
+    },
+    "class_type": "VAEEncode"
+  },
+  "444": {
+    "inputs": {
+      "samples": [
+        "447",
+        0
+      ],
+      "vae": [
+        "465",
+        0
+      ]
+    },
+    "class_type": "VAEDecode"
+  },
+  "447": {
+    "inputs": {
+      "seed": 43,
+      "steps": 25,
+      "cfg": 2.5,
+      "sampler_name": "euler",
+      "scheduler": "simple",
+      "denoise": 1,
+      "model": [
+        "436",
+        0
+      ],
+      "positive": [
+        "442",
+        0
+      ],
+      "negative": [
+        "440",
+        0
+      ],
+      "latent_image": [
+        "443",
+        0
+      ]
+    },
+    "class_type": "KSampler"
+  },
+  "448": {
+    "inputs": {
+      "image": "IMAGE2_PLACEHOLDER"
+    },
+    "class_type": "LoadImage"
+  },
+  "449": {
+    "inputs": {
+      "image": "IMAGE1_PLACEHOLDER"
+    },
+    "class_type": "LoadImage"
+  },
+  "456": {
+    "inputs": {
+      "filename_prefix": "ComfyUI",
+      "images": [
+        "444",
+        0
+      ]
+    },
+    "class_type": "SaveImage"
+  },
+  "459": {
+    "inputs": {
+      "lora_name": "bfs_head_v5_2511_merged_version_rank_16_fp16.safetensors",
+      "strength_model": 1,
+      "model": [
+        "439",
+        0
+      ]
+    },
+    "class_type": "LoraLoaderModelOnly"
+  },
+  "460": {
+    "inputs": {
+      "image": [
+        "449",
+        0
+      ]
+    },
+    "class_type": "FluxKontextImageScale"
+  },
+  "465": {
+    "inputs": {
+      "vae_name": "qwen_image_vae.safetensors"
+    },
+    "class_type": "VAELoader"
+  },
+  "466": {
+    "inputs": {
+      "image": "IMAGE3_PLACEHOLDER"
+    },
+    "class_type": "LoadImage"
+  }
+}
