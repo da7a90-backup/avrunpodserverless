@@ -63,20 +63,27 @@ def start_comfyui():
         pass
 
     print(f"Starting ComfyUI server from {main_py}...")
+    print(f"Using Python: {sys.executable}")
+    print(f"Working directory: {COMFYUI_PATH}")
 
     # Start ComfyUI with proper python path
     env = os.environ.copy()
     env['PYTHONPATH'] = COMFYUI_PATH
 
+    # Don't capture stdout/stderr so we can see output in logs
     comfyui_process = subprocess.Popen([
         sys.executable,
         main_py,
         "--listen", "127.0.0.1",
         "--port", "7860"
-    ], stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env, cwd=COMFYUI_PATH)
+    ], env=env, cwd=COMFYUI_PATH)
 
     # Wait for server to be ready
     for i in range(120):
+        # Check if process died
+        if comfyui_process.poll() is not None:
+            raise Exception(f"ComfyUI process died with exit code {comfyui_process.returncode}")
+
         try:
             response = requests.get(f"{COMFYUI_URL}/system_stats", timeout=2)
             if response.status_code == 200:
@@ -86,11 +93,6 @@ def start_comfyui():
             if i % 10 == 0:  # Log every 10 seconds
                 print(f"Waiting for ComfyUI... ({i}s) - {e}")
         time.sleep(1)
-
-    # Check if process is still running
-    if comfyui_process.poll() is not None:
-        stdout, stderr = comfyui_process.communicate()
-        raise Exception(f"ComfyUI process died. STDOUT: {stdout.decode()[:500]} STDERR: {stderr.decode()[:500]}")
 
     raise Exception("ComfyUI failed to start after 120 seconds")
 
