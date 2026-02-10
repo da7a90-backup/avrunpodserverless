@@ -53,18 +53,6 @@ def start_comfyui():
     if not os.path.exists(main_py):
         raise Exception(f"ComfyUI main.py not found at {main_py}")
 
-    # Install ComfyUI requirements if they exist
-    requirements_file = f"{COMFYUI_PATH}/requirements.txt"
-    if os.path.exists(requirements_file):
-        print(f"Installing ComfyUI requirements from {requirements_file}...")
-        result = os.system(f"python3 -m pip install -q -r {requirements_file}")
-        if result != 0:
-            print(f"Warning: Some requirements failed to install (exit code {result})")
-        else:
-            print("ComfyUI requirements installed successfully")
-    else:
-        print(f"No requirements.txt found at {requirements_file}")
-
     # Check if already running
     try:
         response = requests.get(f"{COMFYUI_URL}/system_stats", timeout=2)
