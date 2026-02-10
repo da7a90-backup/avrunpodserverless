@@ -283,6 +283,28 @@ def handler(event):
     # Extract input first so it's available in error handler
     input_data = event.get("input", {})
 
+    # Special test mode to list LoRA files
+    if input_data.get("jobId") == "test-list-loras":
+        lora_path = "/runpod-volume/ComfyUI/models/loras"
+        print(f"Listing LoRAs in: {lora_path}")
+        if os.path.exists(lora_path):
+            lora_files = sorted(os.listdir(lora_path))
+            print(f"Found {len(lora_files)} LoRA files:")
+            for f in lora_files:
+                print(f"  - {f}")
+            return {
+                "status": "completed",
+                "jobId": "test-list-loras",
+                "message": f"Found {len(lora_files)} LoRA files",
+                "lora_files": lora_files
+            }
+        else:
+            return {
+                "status": "failed",
+                "jobId": "test-list-loras",
+                "error": f"LoRA path does not exist: {lora_path}"
+            }
+
     try:
         # Wait for ComfyUI to be ready (it's started by the base image)
         print("Waiting for ComfyUI to be ready...")
