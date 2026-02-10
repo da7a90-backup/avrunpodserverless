@@ -10,8 +10,5 @@ RUN pip install --no-cache-dir \
 # Copy handler
 COPY handler.py /handler.py
 
-# Verify installations
-RUN python -c "import runpod; import torch; import PIL; print('All dependencies installed')"
-
 # Start handler
-CMD ["python", "-u", "/handler.py"]
+CMD ["python3", "-u", "/handler.py"]

@@ -63,7 +63,7 @@ def start_comfyui():
         pass
 
     print(f"Starting ComfyUI server from {main_py}...")
-    print(f"Using Python: {sys.executable}")
+    print(f"Using Python: python3")
     print(f"Working directory: {COMFYUI_PATH}")
 
     # Start ComfyUI with proper python path
@@ -71,9 +71,9 @@ def start_comfyui():
     env['PYTHONPATH'] = COMFYUI_PATH
 
     # Don't capture stdout/stderr so we can see output in logs
-    print(f"Executing: {sys.executable} {main_py} --listen 127.0.0.1 --port 7860")
+    print(f"Executing: python3 {main_py} --listen 127.0.0.1 --port 7860")
     comfyui_process = subprocess.Popen([
-        sys.executable,
+        "python3",
         main_py,
         "--listen", "127.0.0.1",
         "--port", "7860"
