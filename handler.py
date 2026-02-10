@@ -148,7 +148,8 @@ def prepare_workflow(
     reference_image_name: str,
     user_image1_name: str,
     user_image2_name: Optional[str],
-    prompt: str
+    prompt: str,
+    is_couples: bool
 ) -> Dict[str, Any]:
     """Prepare workflow with uploaded images and prompt"""
     workflow_str = json.dumps(workflow)
@@ -158,11 +159,16 @@ def prepare_workflow(
 
     # Replace placeholders
     workflow_str = workflow_str.replace("PROMPT_PLACEHOLDER", escaped_prompt)
-    workflow_str = workflow_str.replace("REFERENCE_IMAGE_PLACEHOLDER", reference_image_name)
-    workflow_str = workflow_str.replace("IMAGE1_PLACEHOLDER", user_image1_name)
 
-    if user_image2_name:
+    if is_couples:
+        # Couples workflow: IMAGE1=user1, IMAGE2=user2, IMAGE3=reference
+        workflow_str = workflow_str.replace("IMAGE1_PLACEHOLDER", user_image1_name)
         workflow_str = workflow_str.replace("IMAGE2_PLACEHOLDER", user_image2_name)
+        workflow_str = workflow_str.replace("IMAGE3_PLACEHOLDER", reference_image_name)
+    else:
+        # Single workflow: IMAGE1=user, IMAGE2=reference
+        workflow_str = workflow_str.replace("IMAGE1_PLACEHOLDER", user_image1_name)
+        workflow_str = workflow_str.replace("IMAGE2_PLACEHOLDER", reference_image_name)
 
     return json.loads(workflow_str)
 
@@ -333,7 +339,8 @@ def handler(event):
             reference_image_name,
             user_image1_name,
             user_image2_name,
-            prompt
+            prompt,
+            is_couples
         )
 
         # Queue prompt
