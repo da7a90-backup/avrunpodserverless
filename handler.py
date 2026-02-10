@@ -351,7 +351,7 @@ def handler(event):
         print(f"Prompt queued with ID {prompt_id}, waiting for completion...")
 
         # Wait for results
-        result_images = wait_for_completion(prompt_id, timeout=300)
+        result_images = wait_for_completion(prompt_id, timeout=900)
 
         print(f"Workflow completed, got {len(result_images)} images")
 
