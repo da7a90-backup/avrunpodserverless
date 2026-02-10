@@ -29,6 +29,12 @@ print(f"Python version: {sys.version}")
 print(f"Looking for ComfyUI at: {COMFYUI_PATH}")
 print(f"ComfyUI exists: {os.path.exists(COMFYUI_PATH)}")
 
+# Debug: List contents of /runpod-volume
+if os.path.exists("/runpod-volume"):
+    print(f"Contents of /runpod-volume: {os.listdir('/runpod-volume')}")
+else:
+    print("/runpod-volume does not exist - network volume not mounted")
+
 # Global ComfyUI process
 comfyui_process = None
 
@@ -257,12 +263,12 @@ def handler(event):
         "images": ["base64_encoded_image1", ...]
     }
     """
+    # Extract input first so it's available in error handler
+    input_data = event.get("input", {})
+
     try:
         # Start ComfyUI if not running
         start_comfyui()
-
-        # Extract input
-        input_data = event.get("input", {})
         job_id = input_data.get("jobId")
         style_id = input_data.get("styleId", "single")
         user_image1_url = input_data.get("userImage1Url")
