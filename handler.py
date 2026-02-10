@@ -161,12 +161,17 @@ def prepare_workflow(
     workflow_str = workflow_str.replace("PROMPT_PLACEHOLDER", escaped_prompt)
 
     if is_couples:
-        # Couples workflow: IMAGE1=reference, IMAGE2=user1, IMAGE3=user2
+        # Couples workflow: IMAGE1=reference (style), IMAGE2=user_face_1, IMAGE3=user_face_2
+        print(f"  IMAGE1 (reference style) = {reference_image_name}")
+        print(f"  IMAGE2 (user face 1) = {user_image1_name}")
+        print(f"  IMAGE3 (user face 2) = {user_image2_name}")
         workflow_str = workflow_str.replace("IMAGE1_PLACEHOLDER", reference_image_name)
         workflow_str = workflow_str.replace("IMAGE2_PLACEHOLDER", user_image1_name)
         workflow_str = workflow_str.replace("IMAGE3_PLACEHOLDER", user_image2_name)
     else:
-        # Single workflow: IMAGE1=reference, IMAGE2=user
+        # Single workflow: IMAGE1=reference (style), IMAGE2=user_face
+        print(f"  IMAGE1 (reference style) = {reference_image_name}")
+        print(f"  IMAGE2 (user face) = {user_image1_name}")
         workflow_str = workflow_str.replace("IMAGE1_PLACEHOLDER", reference_image_name)
         workflow_str = workflow_str.replace("IMAGE2_PLACEHOLDER", user_image1_name)
 
@@ -316,6 +321,11 @@ def handler(event):
             }
 
         print(f"Processing job {job_id} with style {style_id}")
+        print(f"Input URLs:")
+        print(f"  referenceImageUrl (style) = {reference_image_url}")
+        print(f"  userImage1Url (face) = {user_image1_url}")
+        if user_image2_url:
+            print(f"  userImage2Url (face 2) = {user_image2_url}")
 
         # Upload images to ComfyUI
         print("Uploading reference image...")
