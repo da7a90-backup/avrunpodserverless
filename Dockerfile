@@ -3,10 +3,13 @@ FROM runpod/base:0.4.0-cuda11.8.0
 # Set working directory
 WORKDIR /
 
-# Install all ComfyUI dependencies during build
+# Install PyTorch with CUDA 11.8 support
+RUN python3 -m pip install --no-cache-dir \
+    torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+
+# Install all other ComfyUI dependencies
 RUN python3 -m pip install --no-cache-dir \
     runpod requests websocket-client \
-    torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 \
     transformers diffusers accelerate \
     pillow numpy opencv-python \
     aiohttp pyyaml safetensors \
