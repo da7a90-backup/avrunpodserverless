@@ -21,9 +21,9 @@ RUN python3 -c "from huggingface_hub import hf_hub_download; \
         local_dir='/tmp/qwen-models', \
         local_dir_use_symlinks=False \
     )" && \
-    mkdir -p /comfyui/models/text_encoders && \
+    mkdir -p /comfyui/models/clip && \
     mv /tmp/qwen-models/split_files/text_encoders/qwen_2.5_vl_7b_fp8_scaled.safetensors \
-       /comfyui/models/text_encoders/
+       /comfyui/models/clip/
 
 # UNET/Diffusion Model (40.9 GB)
 RUN python3 -c "from huggingface_hub import hf_hub_download; \
@@ -33,9 +33,9 @@ RUN python3 -c "from huggingface_hub import hf_hub_download; \
         local_dir='/tmp/qwen-edit-models', \
         local_dir_use_symlinks=False \
     )" && \
-    mkdir -p /comfyui/models/diffusion_models && \
+    mkdir -p /comfyui/models/unet && \
     mv /tmp/qwen-edit-models/split_files/diffusion_models/qwen_image_edit_2511_bf16.safetensors \
-       /comfyui/models/diffusion_models/
+       /comfyui/models/unet/
 
 # VAE Model (254 MB)
 RUN python3 -c "from huggingface_hub import hf_hub_download; \
@@ -116,8 +116,8 @@ COPY handler.py /handler.py
 #===============================================================================
 
 RUN echo "=== Verifying Model Downloads ===" && \
-    ls -lh /comfyui/models/text_encoders/*.safetensors && \
-    ls -lh /comfyui/models/diffusion_models/*.safetensors && \
+    ls -lh /comfyui/models/clip/*.safetensors && \
+    ls -lh /comfyui/models/unet/*.safetensors && \
     ls -lh /comfyui/models/vae/*.safetensors && \
     ls -lh /comfyui/models/loras/*.safetensors && \
     echo "" && \
