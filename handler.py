@@ -368,10 +368,22 @@ def handler(event):
 
         print(f"Workflow completed, got {len(result_images)} images")
 
-        # Encode images as base64
+        # Encode images as base64 PNG (preserve quality)
+        from PIL import Image
+        import io
+
         encoded_images = []
         for img_data in result_images:
-            encoded = base64.b64encode(img_data).decode('utf-8')
+            # Load image and ensure it's saved as PNG with no compression
+            img = Image.open(io.BytesIO(img_data))
+
+            # Save as PNG with maximum quality (no compression)
+            output_buffer = io.BytesIO()
+            img.save(output_buffer, format='PNG', compress_level=0)
+            png_data = output_buffer.getvalue()
+
+            # Encode to base64
+            encoded = base64.b64encode(png_data).decode('utf-8')
             encoded_images.append(encoded)
 
         return {
