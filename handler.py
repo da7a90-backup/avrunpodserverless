@@ -237,15 +237,19 @@ def wait_for_completion(prompt_id: str, timeout: int = 300) -> List[bytes]:
                         subfolder = img.get('subfolder', '')
                         img_type = img.get('type', 'output')
 
-                        # Download image
+                        # Download image with explicit PNG Accept header
                         params = {
                             'filename': filename,
                             'subfolder': subfolder,
                             'type': img_type
                         }
+                        headers = {
+                            'Accept': 'image/png,image/*;q=0.8,*/*;q=0.5'
+                        }
                         img_response = requests.get(
                             f"{COMFYUI_URL}/view",
                             params=params,
+                            headers=headers,
                             timeout=30
                         )
 
