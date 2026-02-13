@@ -106,8 +106,11 @@ def start_comfyui():
 
 def upload_image(image_url: str, filename: str) -> str:
     """Download image from URL and upload to ComfyUI"""
-    # Download image
-    response = requests.get(image_url, timeout=30)
+    # Download image with explicit PNG Accept header to prevent WebP conversion
+    headers = {
+        'Accept': 'image/png,image/*;q=0.8,*/*;q=0.5'
+    }
+    response = requests.get(image_url, headers=headers, timeout=30)
     if response.status_code != 200:
         raise Exception(f"Failed to download image from {image_url}")
 
