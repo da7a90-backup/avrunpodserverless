@@ -25,16 +25,16 @@ RUN python3 -c "from huggingface_hub import hf_hub_download; \
     mv /tmp/qwen-models/split_files/text_encoders/qwen_2.5_vl_7b_fp8_scaled.safetensors \
        /comfyui/models/clip/
 
-# UNET/Diffusion Model (40.9 GB)
+# UNET/Diffusion Model - FP8 Quantized (19 GB, ~50% smaller than BF16)
 RUN python3 -c "from huggingface_hub import hf_hub_download; \
     hf_hub_download( \
-        repo_id='Comfy-Org/Qwen-Image-Edit_ComfyUI', \
-        filename='split_files/diffusion_models/qwen_image_edit_2511_bf16.safetensors', \
+        repo_id='drbaph/Qwen-Image-Edit-2511-FP8', \
+        filename='qwen_image_edit_2511_fp8_e4m3fn.safetensors', \
         local_dir='/tmp/qwen-edit-models', \
         local_dir_use_symlinks=False \
     )" && \
     mkdir -p /comfyui/models/unet && \
-    mv /tmp/qwen-edit-models/split_files/diffusion_models/qwen_image_edit_2511_bf16.safetensors \
+    mv /tmp/qwen-edit-models/qwen_image_edit_2511_fp8_e4m3fn.safetensors \
        /comfyui/models/unet/
 
 # VAE Model (254 MB)
