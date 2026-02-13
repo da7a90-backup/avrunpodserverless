@@ -271,7 +271,7 @@ def wait_for_completion(prompt_id: str, timeout: int = 300) -> List[bytes]:
 
 def handler(event):
     """
-    RunPod handler function
+    RunPod handler function - optimized for load balancer mode (/runsync endpoint)
 
     Expected input:
     {
@@ -287,27 +287,36 @@ def handler(event):
     {
         "status": "completed",
         "jobId": "uuid",
-        "images": ["base64_encoded_image1", ...]
+        "images": ["base64_encoded_image1", ...],
+        "message": "Generated N images successfully"
+    }
+
+    Or on error:
+    {
+        "status": "failed",
+        "jobId": "uuid",
+        "error": "error message"
     }
     """
     # Extract input first so it's available in error handler
     input_data = event.get("input", {})
 
     try:
-        # Wait for ComfyUI to be ready (it's started by the base image)
-        print("Waiting for ComfyUI to be ready...")
-        for i in range(60):
+        # Quick ComfyUI readiness check (it should already be running in load balancer mode)
+        print("Checking ComfyUI readiness...")
+        max_wait = 30  # Reduced from 60s for load balancer mode
+        for i in range(max_wait):
             try:
                 response = requests.get(f"{COMFYUI_URL}/system_stats", timeout=2)
                 if response.status_code == 200:
-                    print(f"ComfyUI is ready after {i} seconds")
+                    print(f"ComfyUI is ready (checked after {i}s)")
                     break
-            except:
-                if i % 10 == 0:
-                    print(f"Still waiting for ComfyUI... ({i}s)")
+            except Exception as e:
+                if i % 5 == 0:
+                    print(f"Waiting for ComfyUI... ({i}/{max_wait}s)")
                 time.sleep(1)
         else:
-            raise Exception("ComfyUI not ready after 60 seconds")
+            raise Exception(f"ComfyUI not ready after {max_wait} seconds")
 
         job_id = input_data.get("jobId")
         style_id = input_data.get("styleId", "single")
