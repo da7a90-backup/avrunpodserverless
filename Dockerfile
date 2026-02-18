@@ -7,7 +7,9 @@ WORKDIR /comfyui
 RUN pip install --no-cache-dir \
     huggingface-hub \
     accelerate \
-    safetensors
+    safetensors \
+    fastapi \
+    uvicorn
 
 #===============================================================================
 # Download all models from HuggingFace at build time
@@ -72,6 +74,13 @@ RUN python3 -c "from huggingface_hub import hf_hub_download; \
     mv /tmp/lightning-lora/Qwen-Image-Edit-2511-Lightning-4steps-V1.0-bf16.safetensors \
        /comfyui/models/loras/ || echo "Lightning LoRA download failed, continuing..."
 
+# Upscale Models
+RUN mkdir -p /comfyui/models/upscale_models && \
+    wget -q -O /comfyui/models/upscale_models/4x_NMKD-Superscale-SP_178000_G.pth \
+        "https://huggingface.co/uwg/upscaler/resolve/main/ESRGAN/4x_NMKD-Superscale-SP_178000_G.pth" && \
+    wget -q -O /comfyui/models/upscale_models/1x-ITF-SkinDiffDetail-Lite-v1.pth \
+        "https://huggingface.co/uwg/upscaler/resolve/main/ESRGAN/1x-ITF-SkinDiffDetail-Lite-v1.pth"
+
 # Clean up temporary directories
 RUN rm -rf /tmp/qwen-models /tmp/qwen-edit-models /tmp/qwen-models-vae /tmp/bfs-lora /tmp/lightning-lora
 
@@ -91,10 +100,24 @@ RUN git clone https://github.com/kijai/ComfyUI-AuraFlow.git && \
     cd ComfyUI-AuraFlow && \
     pip install --no-cache-dir -r requirements.txt || true
 
-# ComfyUI-KJNodes - Required for FluxKontextImageScale and other utility nodes
+# ComfyUI-KJNodes - Required for FluxKontextImageScale, ImageConcanate and other utility nodes
 RUN git clone https://github.com/kijai/ComfyUI-KJNodes.git && \
     cd ComfyUI-KJNodes && \
     pip install --no-cache-dir -r requirements.txt || true
+
+# rgthree-comfy - Required for Image Comparer node
+RUN git clone https://github.com/rgthree/rgthree-comfy.git || true
+
+# ComfyUI-Easy-Use - Required for easy cleanGpuUsed, easy clearCacheAll nodes
+RUN git clone https://github.com/yolain/ComfyUI-Easy-Use.git && \
+    cd ComfyUI-Easy-Use && \
+    pip install --no-cache-dir -r requirements.txt || true
+
+# ComfyUI_Comfyroll_CustomNodes - Required for Comfyroll nodes
+RUN git clone https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes.git || true
+
+# comfyui_qwen_image_edit_adv - Required for QwenImageEditScale node
+RUN git clone https://github.com/lenML/comfyui_qwen_image_edit_adv.git || true
 
 # Note: CFGNorm is a built-in ComfyUI node, no custom node needed
 
@@ -108,8 +131,9 @@ WORKDIR /comfyui
 COPY workflow_single.json /workflow_single.json
 COPY workflow_couples.json /workflow_couples.json
 
-# Copy handler
+# Copy handler and load balancer app
 COPY handler.py /handler.py
+COPY app_lb.py /app_lb.py
 
 #===============================================================================
 # Verify installations
@@ -130,5 +154,8 @@ RUN echo "=== Verifying Model Downloads ===" && \
 # Set environment variables
 ENV COMFYUI_PATH=/comfyui
 ENV PYTHONUNBUFFERED=1
+ENV PORT=5000
+ENV PORT_HEALTH=5000
 
-# The base image's entrypoint will start ComfyUI and run handler.py
+# Run the FastAPI load balancer server
+CMD ["python3", "/app_lb.py"]
